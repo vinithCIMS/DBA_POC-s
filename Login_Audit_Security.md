@@ -76,6 +76,7 @@ GO
 ### **5. Monitor Audit File Generation**
 
 - After enabling the audit, files should start generating in the specified folder (e.g., `P:\SCT\Temp_VIA\Audit_Files`).
+![image](https://github.com/user-attachments/assets/7b3b46bc-416f-4940-ac45-78b2584d67fb)
 
 ### **6. Query Audit Logs**
 
@@ -101,6 +102,7 @@ FROM sys.fn_get_audit_file(
 GO
 
 ```
+![image](https://github.com/user-attachments/assets/87b85779-333e-4b82-b7bf-19f7b8ebfa1a)
 
 ---
 
