@@ -209,3 +209,94 @@ ORDER BY
 ## 5. Conclusion
 
 This POC demonstrates a working login auditing system for the `cimsdba` account in SQL Server. The implemented components ensure effective monitoring and alerting on access attempts, facilitating better security and compliance management.
+
+
+# Backout Plan for SQL Server Login Auditing
+
+## 1. Objective
+
+The objective of this backout plan is to provide a clear and concise process for disabling and dropping all components related to the SQL Server login auditing system for the `cimsdba` account. This plan ensures that the system can be rolled back without leaving any residual elements.
+
+## 2. Components to be Disabled/Dropped
+
+1. **Trigger**: `trg_LogCimsDBALogins`
+2. **Stored Procedure**: `SetAlertStatus`
+3. **Tables**: `LoginAudit`, `Settings`
+
+## 3. Backout Steps
+
+### 3.1. Disable the Trigger
+
+To prevent the trigger from executing during a rollback, disable the trigger first.
+
+```sql
+USE master;
+GO
+
+DISABLE TRIGGER trg_LogCimsDBALogins ON ALL SERVER;
+GO
+```
+
+### 3.2. Drop the Trigger
+
+After disabling, drop the trigger from the server.
+
+```sql
+USE master;
+GO
+
+DROP TRIGGER trg_LogCimsDBALogins ON ALL SERVER;
+GO
+```
+
+### 3.3. Drop the Stored Procedure
+
+Remove the stored procedure that manages alert status.
+
+```sql
+USE AdminDB;
+GO
+
+DROP PROCEDURE IF EXISTS dbo.SetAlertStatus;
+GO
+```
+
+### 3.4. Drop the Tables
+
+Drop the `LoginAudit` and `Settings` tables to remove any stored data related to the auditing system.
+
+```sql
+USE AdminDB;
+GO
+
+DROP TABLE IF EXISTS dbo.LoginAudit;
+GO
+
+DROP TABLE IF EXISTS dbo.Settings;
+GO
+```
+
+### 3.5. Verify Removal
+
+Run the following queries to ensure all components have been removed:
+
+```sql
+-- Check if the trigger is dropped
+SELECT *
+FROM sys.triggers
+WHERE name = 'trg_LogCimsDBALogins';
+
+-- Check if the stored procedure is dropped
+SELECT *
+FROM sys.objects
+WHERE name = 'SetAlertStatus' AND type = 'P';
+
+-- Check if the tables are dropped
+SELECT *
+FROM INFORMATION_SCHEMA.TABLES
+WHERE TABLE_NAME = 'LoginAudit' OR TABLE_NAME = 'Settings';
+```
+
+## 4. Rollback Confirmation
+
+After executing the backout plan, confirm that all components have been successfully disabled or dropped. This can be done by reviewing the results of the verification queries. Ensure that there are no residual components remaining that could interfere with future operations.
