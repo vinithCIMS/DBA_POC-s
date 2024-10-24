@@ -30,7 +30,7 @@ This POC document outlines the steps to set up a stored procedure (`pr_Jobs_GetI
 1. Open SQL Server Management Studio (SSMS).
 2. Connect to the SQL Server instance where the procedure will be created.
 3. Execute the following script to create the stored procedure `pr_Jobs_GetInfo` in the desired database (e.g., **msdb**):
-   https://github.com/vinithCIMS/DBA_POC-s/blob/main/Jobs/SQL%20Server%20Job%20History%20Report%20Setup.md
+   -[pr_Jobs_GetInfo](https://github.com/vinithCIMS/DBA_POC-s/blob/main/Jobs/pr_Jobs_GetInfo.sql)
 ### 2.2 Verifying the Stored Procedure
 
 - After creating the procedure, run a few test executions to verify the output:
