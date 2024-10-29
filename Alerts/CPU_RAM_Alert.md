@@ -19,11 +19,14 @@ To monitor CPU and RAM usage on a SQL Server instance, log details to a dedicate
 ### Step 1: **Create Required Tables in AdminDB**
 
 1. **Create `ServerStatus` Table**: This table stores the current status of CPU/memory utilization, allowing the system to track state changes.
-2. **Create `CPURAMUsageLog` Table**: This table logs each check with CPU and memory usage details.
+  - [01.AdminDB_ServerStatus_Table.sql](https://github.com/vinithCIMS/DBA_POC-s/blob/main/Alerts/01.AdminDB_ServerStatus_Table.sql)
+3. **Create `CPURAMUsageLog` Table**: This table logs each check with CPU and memory usage details.
+- [02.AdminDB_CPURAMUsageLog_Table.sql](https://github.com/vinithCIMS/DBA_POC-s/blob/main/Alerts/02.AdminDB_CPURAMUsageLog_Table.sql)
 
 ### Step 2: **Create `pr_CPURAMAlert` Stored Procedure**
 
 The procedure monitors CPU and memory usage, logs the data, and sends alerts when thresholds are crossed or restored.
+- [03.msdb_pr_CPURAMAlert_Procedure.sql](https://github.com/vinithCIMS/DBA_POC-s/blob/main/Alerts/03.msdb_pr_CPURAMAlert_Procedure.sql)
 
 ### Step 3: **Create SQL Agent Job for Scheduled Monitoring**
 
