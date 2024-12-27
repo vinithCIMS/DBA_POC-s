@@ -6,9 +6,9 @@ The goal is to modify the [RecalcCounts] table to include a new column, update i
 
 ## Modifications Overview
 
-1. **Adding the New Column**: A persisted computed column, [RequestedDate], derived from the [RequestedTime] column.
-2. **Updating the Primary Key**: Incorporate the new column [RequestedDate] into the primary key and align it with the partition scheme.
-3. **Creating a Clustered Index**: Implement a clustered index on the partitioning column [RequestedDate] to optimize storage and retrieval.
+1. **Adding the New Column**: A persisted computed column, [RequestedOn], derived from the [RequestedTime] column.
+2. **Updating the Primary Key**: Incorporate the new column [RequestedOn] into the primary key and align it with the partition scheme.
+3. **Creating a Clustered Index**: Implement a clustered index on the partitioning column [RequestedOn] to optimize storage and retrieval.
 
 
 ## Steps to Implement
@@ -16,9 +16,7 @@ The goal is to modify the [RecalcCounts] table to include a new column, update i
 ### 1. Add the Persisted Computed Column
 
 ```
-ALTER TABLE [RecalcCounts]
-ADD RequestedDate AS CONVERT(date, RequestedTime) PERSISTED NOT NULL;
-GO
+alter table RecalcCounts add RequestedOn as convert(date, RequestedTime) Persisted not null;
 ```
 
 ### 2. Modify the Primary Key
@@ -26,23 +24,15 @@ GO
 Drop the existing primary key (if applicable) and create a new primary key using the partition scheme:
 
 ```
-ALTER TABLE [dbo].[RecalcCounts]
-ADD CONSTRAINT [pkRecalcCounts_RecordId] PRIMARY KEY NONCLUSTERED
-(
-    [RecordId] ASC,
-    [RequestedDate] ASC
-)
-ON ps_DateMonthly_Secondary(RequestedDate);
-GO
+alter table RecalcCounts
+add constraint pkRecalcCounts_RecordId primary key nonclustered (RecordId , RequestedOn)
+on ps_DateMonthly_Secondary (RequestedOn);
 ```
 
 ### 3. Create a Partitioned Clustered Index
 
 ```
-CREATE CLUSTERED INDEX ix_RecalcCounts_Partitioned
-ON [dbo].[RecalcCounts](RequestedDate)
-ON ps_DateMonthly_Secondary(RequestedDate);
-GO
+create clustered index ix_RecalcCounts_Partitioned  on RecalcCounts (RequestedOn) on ps_DateMonthly_Secondary (RequestedOn);
 ```
 
 ## Validation
@@ -65,13 +55,13 @@ INNER JOIN sys.data_spaces ds
 WHERE t.name in ('RecalcCounts')
 ORDER BY t.name, i.name;
 ```
-![image](https://github.com/user-attachments/assets/74a87ac6-7c41-40cc-b1ea-cf648bfc7cae)
 ```
 exec pr_Partition_GetInfo 'RecalcCounts'
 ```
-![image](https://github.com/user-attachments/assets/75da3714-58c2-4a91-848c-9a373fa56461)
+![image](https://github.com/user-attachments/assets/0ff19881-0e3f-4a0b-a1a0-b5da4bdd884f)
 
-![image](https://github.com/user-attachments/assets/3969c353-6592-4dbe-8577-d3443d78085b)
+![image](https://github.com/user-attachments/assets/c5e3020b-de67-4f92-8932-e36078968c73)
+
 
 ---
 ## Rollback Plan
@@ -81,7 +71,7 @@ In case of issues during implementation, the following steps will be taken to re
 ### Drop the added column:
 
 ```
-ALTER TABLE [dbo].[RecalcCounts] DROP COLUMN RequestedDate;
+ALTER TABLE [dbo].[RecalcCounts] DROP COLUMN RequestedOn;
 GO
 ```
 
